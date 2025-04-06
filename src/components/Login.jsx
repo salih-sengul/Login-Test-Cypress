@@ -11,14 +11,16 @@ const initialForm = {
 };
 
 const sifreDogrulama = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+const emailDogrulama = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 export default function Login() {
   const [form, setForm] = useState(initialForm);
   const [errors, setError] = useState({
-    email: '',
-    password: '',
-    terms: '',
+    email: false,
+    password: false,
+    terms: false,
   })
+  const [isValid, setIsValid] = useState(false)
 
   const history = useHistory();
 
@@ -35,6 +37,25 @@ export default function Login() {
       }
       console.log("here")
     }
+
+    if(type == "email"){
+      if(!emailDogrulama.test(value)){
+        setError({...errors, email:true})
+      }else{
+        setError({...errors, email:false})
+      }
+      console.log("here")
+    }
+    if(type == "checkbox"){
+      const çek = form.terms
+      console.log("here: ",çek)
+    }
+    setIsValid((errors.email && errors.password && errors.terms))
+
+    console.log(errors.email )
+    console.log( errors.password)
+    console.log( errors.terms)
+    console.log(errors.email && errors.password && errors.terms)
   };
 
   const handleSubmit = (event) => {
@@ -68,6 +89,7 @@ export default function Login() {
           value={form.email}
         />
       </FormGroup>
+      {errors.email && <p>Lütfen geçerli bir email adresi giriniz</p>}
       <FormGroup>
         <Label for="examplePassword">Password</Label>
         <Input
@@ -100,7 +122,7 @@ export default function Login() {
         </Label>
       </FormGroup>
       <FormGroup className="text-center p-4">
-        <Button color="primary" disabled={!form.terms}>
+        <Button color="primary" disabled={!isValid}>
           Sign In
         </Button>
       </FormGroup>
