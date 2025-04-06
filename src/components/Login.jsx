@@ -10,8 +10,15 @@ const initialForm = {
   terms: false,
 };
 
+const sifreDogrulama = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
 export default function Login() {
   const [form, setForm] = useState(initialForm);
+  const [errors, setError] = useState({
+    email: '',
+    password: '',
+    terms: '',
+  })
 
   const history = useHistory();
 
@@ -19,6 +26,15 @@ export default function Login() {
     let { name, value, type, checked } = event.target;
     value = type == 'checkbox' ? checked : value;
     setForm({ ...form, [name]: value });
+
+    if(type == "password"){
+      if(!sifreDogrulama.test(value)){
+        setError({...errors, password:true})
+      }else{
+        setError({...errors, password:false})
+      }
+      console.log("here")
+    }
   };
 
   const handleSubmit = (event) => {
@@ -63,7 +79,14 @@ export default function Login() {
           value={form.password}
         />
       </FormGroup>
-      {/* reactstrap checkbox ekleyelim*/}
+      {errors.password && (
+        <ul>
+          <li>Has minimum 8 characters in length.</li>
+          <li>At least one uppercase English letter.</li>
+          <li>At least one lowercase English letter.</li>
+          <li>At least one digit.</li>
+          <li>At least one special character</li>
+        </ul>)}
       <FormGroup check>
         <Input
           type="checkbox"
